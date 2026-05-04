@@ -336,6 +336,14 @@
     try {
       const r = await fetch(`${API}/api/status/${jobId}?log_offset=${logOffset}&lead_offset=${leadOffset}`);
       if (!r.ok) {
+        if (r.status === 404) {
+          // Job lost (server restarted) — stop gracefully
+          stopPoll();
+          appendLog('⚠️ Sessão expirada (servidor reiniciou). Os leads coletados até agora estão na tabela. Inicie uma nova busca para continuar.');
+          setProgress(100, 'Sessão encerrada');
+          reset(false);
+          return;
+        }
         pollErrors++;
         if (pollErrors >= MAX_ERRORS) {
           stopPoll();
@@ -410,6 +418,24 @@
     setProgress(0, 'Iniciando…');
     document.getElementById('progress-wrap').style.display = 'block';
     document.getElementById('log-wrap').style.display = 'block';
+
+    // Wake-up ping — Render free tier hiberna; aguarda servidor acordar
+    appendLog('⏳ Verificando servidor (pode levar até 30s no cold start)...');
+    let serverOk = false;
+    for (let attempt = 1; attempt <= 15; attempt++) {
+      try {
+        const ping = await fetch(`${API}/api/historico`, { signal: AbortSignal.timeout(8000) });
+        if (ping.ok) { serverOk = true; break; }
+      } catch(e) {}
+      appendLog(`   Aguardando servidor acordar... (${attempt}/15)`);
+      await new Promise(r => setTimeout(r, 3000));
+    }
+    if (!serverOk) {
+      appendLog('❌ Servidor não respondeu. Tente novamente em alguns segundos.');
+      reset();
+      return;
+    }
+    appendLog('✅ Servidor pronto!');
 
     // Start job
     let jobId;
