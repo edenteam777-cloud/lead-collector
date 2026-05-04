@@ -299,16 +299,20 @@
 </div>
 
 <script>
+  const API = 'https://lead-collector-nl89.onrender.com';
+
   let currentJobId  = null;
   let allLeads      = [];
   let pollTimer     = null;
   let logOffset     = 0;
   let leadOffset    = 0;
+  let pollErrors    = 0;
+  const MAX_ERRORS  = 10;
 
   // ── Load history on page load ───────────────────────────────────────────────
   async function carregarHistorico() {
     try {
-      const r = await fetch('/api/historico');
+      const r = await fetch(`${API}/api/historico`);
       const d = await r.json();
       const banner = document.getElementById('hist-banner');
       const txt    = document.getElementById('hist-text');
@@ -323,15 +327,26 @@
 
   async function limparHistorico() {
     if (!confirm('Apagar todo o histórico de empresas coletadas?')) return;
-    await fetch('/api/historico', { method: 'DELETE' });
+    await fetch(`${API}/api/historico`, { method: 'DELETE' });
     document.getElementById('hist-banner').style.display = 'none';
   }
 
   // ── Polling ─────────────────────────────────────────────────────────────────
   async function poll(jobId, maxLeads) {
     try {
-      const r = await fetch(`/api/status/${jobId}?log_offset=${logOffset}&lead_offset=${leadOffset}`);
-      if (!r.ok) { stopPoll(); appendLog('❌ Erro ao consultar servidor.'); reset(false); return; }
+      const r = await fetch(`${API}/api/status/${jobId}?log_offset=${logOffset}&lead_offset=${leadOffset}`);
+      if (!r.ok) {
+        pollErrors++;
+        if (pollErrors >= MAX_ERRORS) {
+          stopPoll();
+          appendLog(`❌ Servidor inacessível após ${MAX_ERRORS} tentativas. Tente novamente.`);
+          reset(false);
+        } else {
+          appendLog(`⚠️ Reconectando... (${pollErrors}/${MAX_ERRORS})`);
+        }
+        return;
+      }
+      pollErrors = 0;
       const d = await r.json();
 
       d.logs.forEach(msg => appendLog(msg));
@@ -356,7 +371,14 @@
         carregarHistorico();
       }
     } catch(e) {
-      appendLog('⚠️ Tentando reconectar...');
+      pollErrors++;
+      if (pollErrors >= MAX_ERRORS) {
+        stopPoll();
+        appendLog(`❌ Sem conexão após ${MAX_ERRORS} tentativas.`);
+        reset(false);
+      } else {
+        appendLog(`⚠️ Reconectando... (${pollErrors}/${MAX_ERRORS})`);
+      }
     }
   }
 
@@ -376,6 +398,7 @@
     allLeads   = [];
     logOffset  = 0;
     leadOffset = 0;
+    pollErrors = 0;
     document.getElementById('leads-body').innerHTML = '';
     document.getElementById('log-box').textContent  = '';
     document.getElementById('no-results').style.display  = 'none';
@@ -391,7 +414,7 @@
     // Start job
     let jobId;
     try {
-      const res = await fetch('/api/buscar', {
+      const res = await fetch(`${API}/api/buscar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nicho, local, max_leads: maxLeads }),
@@ -452,7 +475,7 @@
   }
 
   function baixarExcel() {
-    if (currentJobId) window.location.href = `/api/download/${currentJobId}`;
+    if (currentJobId) window.location.href = `${API}/api/download/${currentJobId}`;
   }
 
   function esc(s) {

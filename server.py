@@ -393,7 +393,20 @@ def worker(nicho, local, max_leads, log_q, result_q):
 
 # ── Flask app ──────────────────────────────────────────────────────────────────
 app = Flask(__name__, static_folder=".", static_url_path="")
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
+    return response
+
+
+@app.route("/api/<path:path>", methods=["OPTIONS"])
+def options_handler(path):
+    return "", 204
 
 _jobs: dict = {}
 
