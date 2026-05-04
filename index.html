@@ -299,8 +299,11 @@
 </div>
 
 <script>
-  let currentJobId = null;
-  let allLeads = [];
+  let currentJobId  = null;
+  let allLeads      = [];
+  let pollTimer     = null;
+  let logOffset     = 0;
+  let leadOffset    = 0;
 
   // ── Load history on page load ───────────────────────────────────────────────
   async function carregarHistorico() {
@@ -324,21 +327,60 @@
     document.getElementById('hist-banner').style.display = 'none';
   }
 
+  // ── Polling ─────────────────────────────────────────────────────────────────
+  async function poll(jobId, maxLeads) {
+    try {
+      const r = await fetch(`/api/status/${jobId}?log_offset=${logOffset}&lead_offset=${leadOffset}`);
+      if (!r.ok) { stopPoll(); appendLog('❌ Erro ao consultar servidor.'); reset(false); return; }
+      const d = await r.json();
+
+      d.logs.forEach(msg => appendLog(msg));
+      logOffset += d.logs.length;
+
+      if (d.leads.length > 0) {
+        d.leads.forEach(l => { allLeads.push(l); appendRow(allLeads.length, l); });
+        leadOffset += d.leads.length;
+        updateStats();
+        setProgress(Math.min(Math.round(allLeads.length / maxLeads * 100), 99),
+                    `${allLeads.length} lead(s) coletado(s)…`);
+        document.getElementById('table-wrap').style.display = 'block';
+        document.getElementById('stats-wrap').style.display = 'block';
+      }
+
+      if (d.done) {
+        stopPoll();
+        setProgress(100, 'Concluído!');
+        if (allLeads.length === 0) document.getElementById('no-results').style.display = 'block';
+        if (d.has_excel) document.getElementById('btn-download').style.display = 'block';
+        reset(false);
+        carregarHistorico();
+      }
+    } catch(e) {
+      appendLog('⚠️ Tentando reconectar...');
+    }
+  }
+
+  function stopPoll() {
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  }
+
   // ── Main action ─────────────────────────────────────────────────────────────
   async function iniciar() {
-    const nicho = document.getElementById('nicho').value.trim();
-    const local = document.getElementById('local').value.trim();
+    const nicho    = document.getElementById('nicho').value.trim();
+    const local    = document.getElementById('local').value.trim();
     const maxLeads = parseInt(document.getElementById('num-leads').value);
 
     if (!nicho) { alert('Informe o nicho antes de iniciar.'); return; }
 
-    // Reset UI
-    allLeads = [];
+    stopPoll();
+    allLeads   = [];
+    logOffset  = 0;
+    leadOffset = 0;
     document.getElementById('leads-body').innerHTML = '';
-    document.getElementById('log-box').textContent = '';
-    document.getElementById('no-results').style.display = 'none';
-    document.getElementById('table-wrap').style.display = 'none';
-    document.getElementById('stats-wrap').style.display = 'none';
+    document.getElementById('log-box').textContent  = '';
+    document.getElementById('no-results').style.display  = 'none';
+    document.getElementById('table-wrap').style.display  = 'none';
+    document.getElementById('stats-wrap').style.display  = 'none';
     document.getElementById('btn-download').style.display = 'none';
     document.getElementById('btn-start').disabled = true;
 
@@ -363,47 +405,8 @@
       reset(); return;
     }
 
-    // SSE stream
-    const evtSource = new EventSource(`/api/stream/${jobId}`);
-
-    evtSource.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-
-      if (msg.t === 'log') {
-        appendLog(msg.msg);
-      }
-
-      if (msg.t === 'leads') {
-        msg.leads.forEach(l => {
-          allLeads.push(l);
-          appendRow(allLeads.length, l);
-        });
-        updateStats();
-        setProgress(Math.min(Math.round(allLeads.length / maxLeads * 100), 99),
-                    `${allLeads.length} lead(s) coletado(s)…`);
-        document.getElementById('table-wrap').style.display = 'block';
-        document.getElementById('stats-wrap').style.display = 'block';
-      }
-
-      if (msg.t === 'done') {
-        evtSource.close();
-        setProgress(100, 'Concluído!');
-        if (allLeads.length === 0) {
-          document.getElementById('no-results').style.display = 'block';
-        }
-        if (msg.has_excel) {
-          document.getElementById('btn-download').style.display = 'block';
-        }
-        reset(false);
-        carregarHistorico();
-      }
-    };
-
-    evtSource.onerror = () => {
-      evtSource.close();
-      appendLog('❌ Conexão com servidor perdida.');
-      reset(false);
-    };
+    // Poll a cada 1.2s em vez de SSE (compatível com proxies)
+    pollTimer = setInterval(() => poll(jobId, maxLeads), 1200);
   }
 
   function reset(clearProgress = true) {

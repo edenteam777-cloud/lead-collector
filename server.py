@@ -431,6 +431,7 @@ def buscar():
 
     _jobs[job_id] = {
         "log_q": log_q,
+        "logs": [],
         "leads": [],
         "done": False,
         "excel": None,
@@ -440,11 +441,23 @@ def buscar():
 
     def _process():
         while True:
+            # Drain log queue into persistent list
+            while not log_q.empty():
+                try:
+                    _jobs[job_id]["logs"].append(log_q.get_nowait())
+                except queue.Empty:
+                    break
             try:
-                kind, payload = result_q.get(timeout=0.5)
+                kind, payload = result_q.get(timeout=0.3)
                 if kind == "lead":
                     _jobs[job_id]["leads"].append(payload)
                 elif kind == "done":
+                    # Drain remaining logs before marking done
+                    while not log_q.empty():
+                        try:
+                            _jobs[job_id]["logs"].append(log_q.get_nowait())
+                        except queue.Empty:
+                            break
                     _jobs[job_id]["done"] = True
                     if _jobs[job_id]["leads"]:
                         _jobs[job_id]["excel"] = gerar_excel(_jobs[job_id]["leads"], nicho, local)
@@ -456,6 +469,23 @@ def buscar():
     threading.Thread(target=_process, daemon=True).start()
 
     return jsonify({"job_id": job_id})
+
+
+@app.route("/api/status/<job_id>")
+def status(job_id):
+    if job_id not in _jobs:
+        return jsonify({"error": "Job não encontrado"}), 404
+    job = _jobs[job_id]
+    log_offset  = int(request.args.get("log_offset",  0))
+    lead_offset = int(request.args.get("lead_offset", 0))
+    return jsonify({
+        "logs":        job["logs"][log_offset:],
+        "leads":       job["leads"][lead_offset:],
+        "total_leads": len(job["leads"]),
+        "total_logs":  len(job["logs"]),
+        "done":        job["done"],
+        "has_excel":   job["excel"] is not None,
+    })
 
 
 @app.route("/api/stream/<job_id>")
