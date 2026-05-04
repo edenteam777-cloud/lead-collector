@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 Coletor de Leads</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-dark:  #1F4E79;
+    --blue-mid:   #2E86C1;
+    --blue-light: #D6EAF8;
+    --bg:         #0f1923;
+    --surface:    #16202e;
+    --surface2:   #1c2d3f;
+    --border:     rgba(46,134,193,0.2);
+    --text:       #e8f4fd;
+    --muted:      #7fa8c9;
+    --green:      #27ae60;
+    --red:        #e74c3c;
+    --radius:     12px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 40px rgba(31,78,121,0.4);
+  }
+  .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: .5rem; }
+  .hero p  { color: var(--blue-light); font-size: 1rem; opacity: .9; }
+
+  /* History banner */
+  #hist-banner {
+    display: none;
+    background: rgba(46,134,193,0.12);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.2rem;
+    margin-bottom: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    flex-wrap: wrap;
+  }
+  #hist-banner span { flex: 1; font-size: .9rem; color: var(--blue-light); }
+  #hist-banner button {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+    border-radius: 8px;
+    padding: .4rem .9rem;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  #hist-banner button:hover { background: rgba(231,76,60,.12); }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1.4rem;
+  }
+  .card h2 { font-size: 1rem; font-weight: 600; color: var(--muted); margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: .05em; }
+
+  /* Form grid */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: .4rem; }
+  .field label { font-size: .82rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .field input, .field select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .65rem .9rem;
+    color: var(--text);
+    font-size: .95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .field input:focus, .field select:focus { border-color: var(--blue-mid); }
+  .field input::placeholder { color: var(--muted); opacity: .6; }
+
+  /* Slider */
+  .slider-wrap { margin-bottom: 1.2rem; }
+  .slider-wrap label { font-size: .82rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; display: flex; justify-content: space-between; margin-bottom: .5rem; }
+  .slider-wrap label span { color: var(--text); font-weight: 700; }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 5px;
+    border-radius: 4px;
+    background: var(--surface2);
+    outline: none;
+    accent-color: var(--blue-mid);
+  }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--blue-mid); cursor: pointer; }
+
+  /* Button */
+  .btn {
+    width: 100%;
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue-mid));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: .85rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    font-family: inherit;
+  }
+  .btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+  .btn-download {
+    background: linear-gradient(90deg, var(--green), #2ecc71);
+    margin-top: 1rem;
+  }
+
+  /* Progress */
+  #progress-wrap { display: none; margin-bottom: 1.4rem; }
+  .progress-bar-bg {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: .5rem;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue-mid));
+    border-radius: 99px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+  #progress-label { font-size: .82rem; color: var(--muted); }
+
+  /* Log */
+  #log-wrap { display: none; margin-bottom: 1.4rem; }
+  .log-box {
+    background: #0a0f16;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-family: 'Courier New', monospace;
+    font-size: .8rem;
+    color: #58a6ff;
+    max-height: 220px;
+    overflow-y: auto;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Stats */
+  #stats-wrap { display: none; margin-bottom: 1.4rem; }
+  .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .8rem; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat-box {
+    background: var(--blue-dark);
+    border-radius: var(--radius);
+    padding: 1rem .5rem;
+    text-align: center;
+  }
+  .stat-box .num { font-size: 1.8rem; font-weight: 700; }
+  .stat-box .lbl { font-size: .72rem; opacity: .75; margin-top: .2rem; }
+
+  /* Table */
+  #table-wrap { display: none; }
+  .table-scroll { overflow-x: auto; max-height: 420px; overflow-y: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  thead th {
+    background: var(--blue-dark);
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:nth-child(even) { background: var(--surface2); }
+  tbody tr:hover { background: rgba(46,134,193,0.08); }
+  tbody td { padding: 8px 12px; color: var(--text); white-space: nowrap; vertical-align: middle; }
+  tbody td.muted { color: var(--muted); font-size: .75rem; }
+
+  /* Alerts */
+  .alert { padding: .85rem 1.1rem; border-radius: 10px; font-size: .9rem; margin-bottom: 1rem; }
+  .alert-warn { background: rgba(231,76,60,.1); border: 1px solid rgba(231,76,60,.3); color: #f1948a; }
+  .alert-info { background: rgba(46,134,193,.1); border: 1px solid var(--border); color: var(--blue-light); }
+
+  #no-results { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>🎯 Coletor de Leads</h1>
+    <p>Extrai empresas do Google Maps com telefone e e-mail — exporta para Excel em segundos.</p>
+  </div>
+
+  <!-- History banner -->
+  <div id="hist-banner">
+    <span id="hist-text"></span>
+    <button onclick="limparHistorico()">🗑️ Limpar memória</button>
+  </div>
+
+  <!-- Form -->
+  <div class="card">
+    <h2>Configurar busca</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label>Nicho / Segmento</label>
+        <input id="nicho" type="text" placeholder="Ex: clínica odontológica">
+      </div>
+      <div class="field">
+        <label>Cidade / Região</label>
+        <input id="local" type="text" value="São Paulo" placeholder="Ex: Curitiba, PR">
+      </div>
+    </div>
+    <div class="slider-wrap">
+      <label>Quantidade máxima de leads <span id="slider-val">30</span></label>
+      <input id="num-leads" type="range" min="5" max="200" step="5" value="30"
+             oninput="document.getElementById('slider-val').textContent = this.value">
+    </div>
+    <button class="btn" id="btn-start" onclick="iniciar()">🚀 Iniciar coleta</button>
+  </div>
+
+  <!-- Progress -->
+  <div id="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill"></div></div>
+    <div id="progress-label">Iniciando…</div>
+  </div>
+
+  <!-- Log -->
+  <div id="log-wrap">
+    <div class="log-box" id="log-box"></div>
+  </div>
+
+  <!-- Stats -->
+  <div id="stats-wrap">
+    <div class="stats-grid">
+      <div class="stat-box"><div class="num" id="s-total">0</div><div class="lbl">Empresas</div></div>
+      <div class="stat-box"><div class="num" id="s-tel">0</div><div class="lbl">Com telefone</div></div>
+      <div class="stat-box"><div class="num" id="s-email">0</div><div class="lbl">Com e-mail</div></div>
+      <div class="stat-box"><div class="num" id="s-insta">0</div><div class="lbl">Com Instagram</div></div>
+      <div class="stat-box"><div class="num" id="s-site">0</div><div class="lbl">Com site</div></div>
+    </div>
+    <button class="btn btn-download" id="btn-download" style="display:none" onclick="baixarExcel()">⬇️ Baixar Excel</button>
+  </div>
+
+  <!-- Table -->
+  <div id="table-wrap">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Empresa</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th>Instagram</th>
+            <th>Site</th>
+          </tr>
+        </thead>
+        <tbody id="leads-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- No results -->
+  <div id="no-results" class="alert alert-warn">
+    Nenhum lead encontrado. Tente outro nicho ou localidade.
+  </div>
+
+</div>
+
+<script>
+  let currentJobId = null;
+  let allLeads = [];
+
+  // ── Load history on page load ───────────────────────────────────────────────
+  async function carregarHistorico() {
+    try {
+      const r = await fetch('/api/historico');
+      const d = await r.json();
+      const banner = document.getElementById('hist-banner');
+      const txt    = document.getElementById('hist-text');
+      if (d.total > 0) {
+        txt.textContent = `💾 Memória ativa: ${d.total} empresa(s) já coletadas — duplicatas serão ignoradas automaticamente.`;
+        banner.style.display = 'flex';
+      } else {
+        banner.style.display = 'none';
+      }
+    } catch(e) {}
+  }
+
+  async function limparHistorico() {
+    if (!confirm('Apagar todo o histórico de empresas coletadas?')) return;
+    await fetch('/api/historico', { method: 'DELETE' });
+    document.getElementById('hist-banner').style.display = 'none';
+  }
+
+  // ── Main action ─────────────────────────────────────────────────────────────
+  async function iniciar() {
+    const nicho = document.getElementById('nicho').value.trim();
+    const local = document.getElementById('local').value.trim();
+    const maxLeads = parseInt(document.getElementById('num-leads').value);
+
+    if (!nicho) { alert('Informe o nicho antes de iniciar.'); return; }
+
+    // Reset UI
+    allLeads = [];
+    document.getElementById('leads-body').innerHTML = '';
+    document.getElementById('log-box').textContent = '';
+    document.getElementById('no-results').style.display = 'none';
+    document.getElementById('table-wrap').style.display = 'none';
+    document.getElementById('stats-wrap').style.display = 'none';
+    document.getElementById('btn-download').style.display = 'none';
+    document.getElementById('btn-start').disabled = true;
+
+    setProgress(0, 'Iniciando…');
+    document.getElementById('progress-wrap').style.display = 'block';
+    document.getElementById('log-wrap').style.display = 'block';
+
+    // Start job
+    let jobId;
+    try {
+      const res = await fetch('/api/buscar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nicho, local, max_leads: maxLeads }),
+      });
+      const data = await res.json();
+      if (data.error) { alert(data.error); reset(); return; }
+      jobId = data.job_id;
+      currentJobId = jobId;
+    } catch(e) {
+      alert('Erro ao conectar com o servidor.');
+      reset(); return;
+    }
+
+    // SSE stream
+    const evtSource = new EventSource(`/api/stream/${jobId}`);
+
+    evtSource.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+
+      if (msg.t === 'log') {
+        appendLog(msg.msg);
+      }
+
+      if (msg.t === 'leads') {
+        msg.leads.forEach(l => {
+          allLeads.push(l);
+          appendRow(allLeads.length, l);
+        });
+        updateStats();
+        setProgress(Math.min(Math.round(allLeads.length / maxLeads * 100), 99),
+                    `${allLeads.length} lead(s) coletado(s)…`);
+        document.getElementById('table-wrap').style.display = 'block';
+        document.getElementById('stats-wrap').style.display = 'block';
+      }
+
+      if (msg.t === 'done') {
+        evtSource.close();
+        setProgress(100, 'Concluído!');
+        if (allLeads.length === 0) {
+          document.getElementById('no-results').style.display = 'block';
+        }
+        if (msg.has_excel) {
+          document.getElementById('btn-download').style.display = 'block';
+        }
+        reset(false);
+        carregarHistorico();
+      }
+    };
+
+    evtSource.onerror = () => {
+      evtSource.close();
+      appendLog('❌ Conexão com servidor perdida.');
+      reset(false);
+    };
+  }
+
+  function reset(clearProgress = true) {
+    document.getElementById('btn-start').disabled = false;
+    if (clearProgress) {
+      document.getElementById('progress-wrap').style.display = 'none';
+      document.getElementById('log-wrap').style.display = 'none';
+    }
+  }
+
+  function setProgress(pct, label) {
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = label;
+  }
+
+  function appendLog(msg) {
+    const box = document.getElementById('log-box');
+    box.textContent += msg + '\n';
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function appendRow(idx, lead) {
+    const tbody = document.getElementById('leads-body');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="muted">${idx}</td>
+      <td><strong>${esc(lead.nome)}</strong></td>
+      <td>${esc(lead.telefone) || '<span class="muted">—</span>'}</td>
+      <td>${lead.email ? `<a href="mailto:${esc(lead.email)}" style="color:#58a6ff">${esc(lead.email)}</a>` : '<span class="muted">—</span>'}</td>
+      <td>${lead.instagram ? `<a href="https://instagram.com/${esc(lead.instagram.replace('@',''))}" target="_blank" style="color:#c084fc">${esc(lead.instagram)}</a>` : '<span class="muted">—</span>'}</td>
+      <td>${lead.site ? `<a href="${esc(lead.site)}" target="_blank" style="color:#34d399">${esc(lead.site.replace(/^https?:\/\/(www\.)?/,'').split('/')[0])}</a>` : '<span class="muted">—</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function updateStats() {
+    const n = allLeads.length;
+    document.getElementById('s-total').textContent = n;
+    document.getElementById('s-tel').textContent   = allLeads.filter(l => l.telefone).length;
+    document.getElementById('s-email').textContent = allLeads.filter(l => l.email).length;
+    document.getElementById('s-insta').textContent = allLeads.filter(l => l.instagram).length;
+    document.getElementById('s-site').textContent  = allLeads.filter(l => l.site).length;
+  }
+
+  function baixarExcel() {
+    if (currentJobId) window.location.href = `/api/download/${currentJobId}`;
+  }
+
+  function esc(s) {
+    if (!s) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Enter key on inputs
+  ['nicho','local'].forEach(id =>
+    document.getElementById(id).addEventListener('keydown', e => e.key === 'Enter' && iniciar())
+  );
+
+  carregarHistorico();
+</script>
+</body>
+</html>
