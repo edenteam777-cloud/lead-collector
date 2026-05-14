@@ -1,0 +1,8 @@
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from   = "/api/*"
+  to     = "https://lead-collector-nl89.onrender.com/api/:splat"
+  status = 200
+  force  = true
