@@ -299,7 +299,8 @@
 </div>
 
 <script>
-  const API = 'https://lead-collector-nl89.onrender.com';
+  const API_DIRECT = 'https://lead-collector-nl89.onrender.com'; // só para wake-up ping
+  const API = '';  // proxy Netlify → CORS headers em todos os erros (502, 404, etc.)
 
   let currentJobId  = null;
   let allLeads      = [];
@@ -424,7 +425,7 @@
     let serverOk = false;
     for (let attempt = 1; attempt <= 15; attempt++) {
       try {
-        const ping = await fetch(`${API}/api/historico`, { signal: AbortSignal.timeout(8000) });
+        const ping = await fetch(`${API_DIRECT}/api/historico`, { signal: AbortSignal.timeout(8000) });
         if (ping.ok) { serverOk = true; break; }
       } catch(e) {}
       appendLog(`   Aguardando servidor acordar... (${attempt}/15)`);
