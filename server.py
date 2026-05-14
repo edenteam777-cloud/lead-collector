@@ -226,11 +226,9 @@ def worker(nicho, local, max_leads, log_q, result_q):
             o.add_argument("--no-sandbox")
             o.add_argument("--disable-dev-shm-usage")
             o.add_argument("--disable-gpu")
-            o.add_argument("--single-process")       # maior corte de memória
-            o.add_argument("--no-zygote")             # sem processo zygote
+            o.add_argument("--disable-software-rasterizer")
             o.add_argument("--disable-extensions")
             o.add_argument("--disable-plugins")
-            o.add_argument("--disable-images")
             o.add_argument("--blink-settings=imagesEnabled=false")
             o.add_argument("--disable-background-networking")
             o.add_argument("--disable-default-apps")
@@ -241,7 +239,7 @@ def worker(nicho, local, max_leads, log_q, result_q):
             o.add_argument("--disable-background-timer-throttling")
             o.add_argument("--disable-renderer-backgrounding")
             o.add_argument("--disable-blink-features=AutomationControlled")
-            o.add_argument("--js-flags=--max-old-space-size=200")
+            o.add_argument("--js-flags=--max-old-space-size=256")
             o.add_argument("--window-size=1024,600")
             o.add_argument("--lang=pt-BR")
             o.add_argument("--headless=new")
