@@ -38,7 +38,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-ENV PORT=5000
-EXPOSE 5000
+ENV PORT=8501
+EXPOSE 8501
 
-CMD gunicorn server:app --workers 1 --threads 8 --timeout 300 --bind 0.0.0.0:$PORT
+CMD streamlit run app.py --server.port=$PORT --server.address=0.0.0.0
