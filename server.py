@@ -225,7 +225,20 @@ def worker(nicho, local, max_leads, log_q, result_q):
             o = uc.ChromeOptions()
             o.add_argument("--no-sandbox")
             o.add_argument("--disable-dev-shm-usage")
+            o.add_argument("--disable-gpu")
+            o.add_argument("--disable-extensions")
+            o.add_argument("--disable-plugins")
+            o.add_argument("--disable-background-networking")
+            o.add_argument("--disable-default-apps")
+            o.add_argument("--disable-sync")
+            o.add_argument("--disable-translate")
+            o.add_argument("--mute-audio")
+            o.add_argument("--no-first-run")
+            o.add_argument("--disable-background-timer-throttling")
+            o.add_argument("--disable-renderer-backgrounding")
             o.add_argument("--disable-blink-features=AutomationControlled")
+            o.add_argument("--js-flags=--max-old-space-size=256")
+            o.add_argument("--window-size=1280,720")
             o.add_argument("--lang=pt-BR")
             o.add_argument("--headless=new")
             return o
@@ -251,7 +264,7 @@ def worker(nicho, local, max_leads, log_q, result_q):
                 "Atualize: pip install -U undetected-chromedriver"
             )
 
-        driver.set_window_size(1400, 900)
+        driver.set_window_size(1280, 720)
         query = f"{nicho} em {local}"
         log(f"🗺️  Buscando: {query}")
         driver.get(f"https://www.google.com/maps/search/{query.replace(' ', '+')}")
@@ -376,7 +389,10 @@ def worker(nicho, local, max_leads, log_q, result_q):
             except Exception as e:
                 log(f"   [!] Erro no card {i+1}: {e}")
 
-        driver.quit()
+        try:
+            driver.quit()
+        except Exception:
+            pass
 
         hist["chaves"] = list(chaves_set)
         hist["total"] = len(chaves_set)
