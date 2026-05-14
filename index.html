@@ -308,7 +308,7 @@
   let logOffset     = 0;
   let leadOffset    = 0;
   let pollErrors    = 0;
-  const MAX_ERRORS  = 10;
+  const MAX_ERRORS  = 20;
 
   // ── Load history on page load ───────────────────────────────────────────────
   async function carregarHistorico() {
@@ -392,7 +392,7 @@
   }
 
   function stopPoll() {
-    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
   }
 
   // ── Main action ─────────────────────────────────────────────────────────────
@@ -455,8 +455,14 @@
       reset(); return;
     }
 
-    // Poll a cada 1.2s em vez de SSE (compatível com proxies)
-    pollTimer = setInterval(() => poll(jobId, maxLeads), 1200);
+    // Poll com backoff: começa em 1.5s, aumenta até 5s em caso de erros
+    const doPoll = () => {
+      poll(jobId, maxLeads);
+      if (pollTimer) clearTimeout(pollTimer);
+      const delay = pollErrors > 0 ? Math.min(1500 + pollErrors * 500, 5000) : 1500;
+      pollTimer = setTimeout(doPoll, delay);
+    };
+    pollTimer = setTimeout(doPoll, 1500);
   }
 
   function reset(clearProgress = true) {
