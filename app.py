@@ -37,9 +37,9 @@ def salvar_historico(hist: dict):
 
 # ── Colunas na ordem pedida ────────────────────────────────────────────────────
 _KEYS  = ["nome", "nicho", "telefone", "email", "instagram", "cidade",
-          "ticket_medio", "tempo_empresa", "info_empresa"]
+          "ticket_medio", "tempo_empresa", "porte", "cnpj", "info_empresa"]
 _HEADS = ["#", "Nome", "Nicho", "Telefone", "E-mail", "Instagram",
-          "Cidade", "Ticket Médio", "Tempo de Empresa", "Informações"]
+          "Cidade", "Ticket Médio", "Tempo de Empresa", "Porte", "CNPJ", "Informações"]
 
 def _leads_html_table(leads: list) -> str:
     rows = []
@@ -135,8 +135,9 @@ def gerar_excel(leads, nicho, local) -> bytes:
     ws.title = "Leads"
 
     cols   = ["#", "Nome da Empresa", "Nicho", "Telefone", "Email",
-              "Instagram", "Cidade", "Ticket Médio", "Tempo de Empresa", "Informações"]
-    widths = [5, 32, 18, 18, 32, 22, 18, 14, 18, 50]
+              "Instagram", "Cidade", "Ticket Médio", "Tempo de Empresa",
+              "Porte", "CNPJ", "Informações"]
+    widths = [5, 32, 18, 18, 32, 22, 18, 14, 18, 12, 20, 50]
 
     for c, (t, w) in enumerate(zip(cols, widths), 1):
         cel = ws.cell(row=1, column=c, value=t)
@@ -158,6 +159,8 @@ def gerar_excel(leads, nicho, local) -> bytes:
                 lead.get("cidade", ""),
                 lead.get("ticket_medio", ""),
                 lead.get("tempo_empresa", ""),
+                lead.get("porte", ""),
+                lead.get("cnpj", ""),
                 lead.get("info_empresa", "")]
         fill = PatternFill("solid", fgColor=COR_PAR) if idx % 2 == 0 else None
         for c, v in enumerate(vals, 1):
@@ -169,7 +172,7 @@ def gerar_excel(leads, nicho, local) -> bytes:
 
     ws.freeze_panes = "A2"
     ws.insert_rows(1)
-    ws.merge_cells(f"A1:J1")
+    ws.merge_cells("A1:L1")
     m = ws["A1"]
     m.value     = f"Leads — {nicho.title()} em {local.title()} | {len(leads)} empresas"
     m.font      = Font(bold=True, size=13, color="1F4E79")
@@ -205,7 +208,7 @@ def worker(nicho, local, max_leads, log_q, result_q):
         INSTA_SKIP = {"p","reel","reels","explore","accounts","tv","stories","direct","share",
                       "about","legal","privacy","security","blog","press","api","developer","_n","sharedfiles"}
         ANO_RE    = re.compile(r'(?:desde|fundad[ao]|criado?|estabelecid[ao]|aberto?[\s]+desde|inaugurado?)[:\s]+(\d{4})', re.I)
-        ANO_SIMPLES = re.compile(r'\b(19[5-9]\d|20[0-2]\d)\b')
+        CNPJ_RE   = re.compile(r'\d{2}[\.\s]?\d{3}[\.\s]?\d{3}[\s\/]?\d{4}[\s\-]?\d{2}')
 
         def log(msg): log_q.put(msg)
 
@@ -242,56 +245,115 @@ def worker(nicho, local, max_leads, log_q, result_q):
             if anos <= 0: return ""
             return f"{anos} ano{'s' if anos != 1 else ''} (desde {ano})"
 
+        def extrair_cnpj(html: str) -> str:
+            m = CNPJ_RE.search(html)
+            if not m: return ""
+            digits = re.sub(r"\D", "", m.group())
+            return digits if len(digits) == 14 else ""
+
+        def buscar_cnpj(cnpj: str) -> dict:
+            """Consulta BrasilAPI e retorna dict com campos enriquecidos."""
+            resultado = {}
+            try:
+                r = requests.get(
+                    f"https://brasilapi.com.br/api/cnpj/v1/{cnpj}",
+                    headers=HEADERS, timeout=10
+                )
+                if r.status_code != 200:
+                    return resultado
+                d = r.json()
+
+                # Tempo de empresa (data_abertura: "YYYY-MM-DD" ou "DD/MM/YYYY")
+                abertura = d.get("data_abertura", "")
+                if abertura:
+                    try:
+                        if "-" in abertura:
+                            ano = int(abertura.split("-")[0])
+                        else:
+                            ano = int(abertura.split("/")[-1])
+                        if 1900 <= ano <= 2025:
+                            resultado["tempo_empresa"] = calcular_tempo(ano)
+                    except Exception:
+                        pass
+
+                # Porte
+                porte_raw = d.get("porte", "") or ""
+                porte_map = {
+                    "MEI": "MEI", "ME": "ME (Microempresa)",
+                    "EPP": "EPP (Pequeno Porte)",
+                    "DEMAIS": "Médio/Grande Porte",
+                }
+                resultado["porte"] = porte_map.get(porte_raw.upper(), porte_raw.title())
+
+                # Atividade principal
+                atividades = d.get("descricao_atividade_principal") or d.get("cnaes_secundarios") or []
+                if atividades and isinstance(atividades, list):
+                    resultado["atividade"] = atividades[0].get("text", "").strip()
+
+                # Cidade via CNPJ (complemento se não encontrada)
+                municipio = d.get("municipio", "")
+                uf        = d.get("uf", "")
+                if municipio:
+                    resultado["cidade_cnpj"] = f"{municipio.title()} - {uf}" if uf else municipio.title()
+
+                # CNPJ formatado
+                resultado["cnpj_fmt"] = f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
+
+            except Exception:
+                pass
+            return resultado
+
         def buscar_site(url):
-            """Retorna (email, instagram, tempo_empresa, info_empresa, html)."""
-            email = instagram = tempo = info = ""
+            """Retorna dict com email, instagram, tempo, info, cnpj_data."""
+            result = {"email":"","instagram":"","tempo":"","info":"","cnpj_data":{}}
             url = fmt_url(url)
-            if not url: return email, instagram, tempo, info
+            if not url: return result
             try:
                 r = requests.get(url, headers=HEADERS, timeout=8, verify=False, allow_redirects=True)
                 html = r.text
                 soup = BeautifulSoup(html, "html.parser")
-
-                # Email e Instagram nas âncoras
                 emails = set()
+
                 for tag in soup.find_all("a", href=True):
                     h = tag["href"]
-                    if "instagram.com/" in h and not instagram:
-                        instagram = extrair_instagram(h + '"')
+                    if "instagram.com/" in h and not result["instagram"]:
+                        result["instagram"] = extrair_instagram(h + '"')
                     if h.startswith("mailto:"):
                         e = h.replace("mailto:", "").split("?")[0].strip().lower()
                         d = e.split("@")[-1]
                         if "@" in e and d not in IGNORE:
                             emails.add(e)
 
-                if not instagram: instagram = extrair_instagram(html)
+                if not result["instagram"]:
+                    result["instagram"] = extrair_instagram(html)
                 if not emails:
                     for m in EMAIL_RE.findall(html):
                         d = m.split("@")[-1].lower()
                         if d not in IGNORE:
-                            emails.add(m.lower())
-                            break
+                            emails.add(m.lower()); break
 
-                # Tempo de empresa no conteúdo do site
+                # Tempo de empresa (site)
                 m = ANO_RE.search(html)
                 if m:
                     ano = int(m.group(1))
                     if 1900 <= ano <= 2025:
-                        tempo = calcular_tempo(ano)
+                        result["tempo"] = calcular_tempo(ano)
 
-                # Info: meta description ou primeiro parágrafo relevante
+                # Info: meta description ou 1º parágrafo relevante
                 meta = soup.find("meta", attrs={"name": re.compile(r"description", re.I)})
                 if meta and meta.get("content", "").strip():
-                    info = meta["content"].strip()[:250]
-                if not info:
+                    result["info"] = meta["content"].strip()[:250]
+                if not result["info"]:
                     for tag in soup.find_all(["p", "h2", "h3"]):
                         txt = tag.get_text(" ", strip=True)
                         if len(txt) > 40:
-                            info = txt[:250]
-                            break
+                            result["info"] = txt[:250]; break
 
-                # Páginas de contato / sobre para complementar
-                if not emails or not instagram or not tempo:
+                # CNPJ no HTML principal
+                cnpj = extrair_cnpj(html)
+
+                # Páginas internas (contato/sobre) para complementar
+                if not emails or not result["instagram"] or not result["tempo"] or not cnpj:
                     base = f"{urlparse(url).scheme}://{urlparse(url).netloc}"
                     for slug in ["/contato", "/contact", "/sobre", "/about", "/fale-conosco"]:
                         try:
@@ -302,23 +364,30 @@ def worker(nicho, local, max_leads, log_q, result_q):
                                     d = m2.split("@")[-1].lower()
                                     if d not in IGNORE:
                                         emails.add(m2.lower())
-                            if not instagram:
-                                instagram = extrair_instagram(h2)
-                            if not tempo:
+                            if not result["instagram"]:
+                                result["instagram"] = extrair_instagram(h2)
+                            if not result["tempo"]:
                                 m3 = ANO_RE.search(h2)
                                 if m3:
                                     ano = int(m3.group(1))
                                     if 1900 <= ano <= 2025:
-                                        tempo = calcular_tempo(ano)
-                            if emails and instagram and tempo:
+                                        result["tempo"] = calcular_tempo(ano)
+                            if not cnpj:
+                                cnpj = extrair_cnpj(h2)
+                            if emails and result["instagram"] and result["tempo"] and cnpj:
                                 break
                         except Exception:
                             pass
 
-                email = list(emails)[0] if emails else ""
+                result["email"] = list(emails)[0] if emails else ""
+
+                # BrasilAPI: enriquece com dados oficiais da Receita Federal
+                if cnpj:
+                    result["cnpj_data"] = buscar_cnpj(cnpj)
+
             except Exception:
                 pass
-            return email, instagram, tempo, info
+            return result
 
         # ── Chrome ──────────────────────────────────────────────────────────────
         log("🚀 Iniciando navegador...")
@@ -439,7 +508,7 @@ def worker(nicho, local, max_leads, log_q, result_q):
                 lead = {
                     "nome": "", "nicho": nicho, "telefone": "", "email": "",
                     "instagram": "", "cidade": "", "ticket_medio": "",
-                    "tempo_empresa": "", "info_empresa": "", "site": ""
+                    "tempo_empresa": "", "porte": "", "cnpj": "", "info_empresa": "", "site": ""
                 }
 
                 # Nome
@@ -562,16 +631,37 @@ def worker(nicho, local, max_leads, log_q, result_q):
                 except Exception:
                     pass
 
-                # Site: email, instagram, tempo e info complementares
+                # Site + BrasilAPI CNPJ
                 if lead["site"]:
                     log(f"   [{len(leads)+1}] {lead['nome'][:38]} — buscando site...")
-                    email, instagram, tempo, info = buscar_site(lead["site"])
-                    lead["email"]     = email
-                    lead["instagram"] = instagram
-                    if not lead["tempo_empresa"] and tempo:
-                        lead["tempo_empresa"] = tempo
-                    if not lead["info_empresa"] and info:
-                        lead["info_empresa"] = info
+                    sd = buscar_site(lead["site"])
+                    lead["email"]     = sd["email"]
+                    lead["instagram"] = sd["instagram"]
+                    if not lead["tempo_empresa"] and sd["tempo"]:
+                        lead["tempo_empresa"] = sd["tempo"]
+                    if not lead["info_empresa"] and sd["info"]:
+                        lead["info_empresa"] = sd["info"]
+
+                    cnpj_data = sd.get("cnpj_data", {})
+                    if cnpj_data:
+                        lead["cnpj"] = cnpj_data.get("cnpj_fmt", "")
+                        if cnpj_data.get("porte"):
+                            lead["porte"] = cnpj_data["porte"]
+                        # CNPJ tem precedência para tempo (data oficial da Receita)
+                        if cnpj_data.get("tempo_empresa"):
+                            lead["tempo_empresa"] = cnpj_data["tempo_empresa"]
+                        # Cidade do CNPJ como fallback
+                        if not lead["cidade"] and cnpj_data.get("cidade_cnpj"):
+                            lead["cidade"] = cnpj_data["cidade_cnpj"]
+                        # Atividade principal enriquece info
+                        if cnpj_data.get("atividade"):
+                            ativ = cnpj_data["atividade"]
+                            if lead["info_empresa"]:
+                                lead["info_empresa"] = f"[{ativ}] {lead['info_empresa']}"
+                            else:
+                                lead["info_empresa"] = ativ
+                        if cnpj_data.get("cnpj_fmt"):
+                            log(f"      🏢 CNPJ {cnpj_data['cnpj_fmt']} | {cnpj_data.get('porte','')} | {cnpj_data.get('tempo_empresa','')}")
                 else:
                     log(f"   [{len(leads)+1}] {lead['nome'][:38]} — sem site")
 
@@ -584,7 +674,7 @@ def worker(nicho, local, max_leads, log_q, result_q):
                 chaves_set.add(chave)
                 leads.append(lead)
                 log(f"   ✓ Tel:{lead['telefone'] or '—'} | Email:{lead['email'] or '—'} | "
-                    f"Cidade:{lead['cidade'] or '—'} | Ticket:{lead['ticket_medio'] or '—'} | "
+                    f"Cidade:{lead['cidade'] or '—'} | Porte:{lead['porte'] or '—'} | "
                     f"Tempo:{lead['tempo_empresa'] or '—'}")
                 result_q.put(("lead", lead))
 
