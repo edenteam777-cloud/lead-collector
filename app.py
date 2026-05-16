@@ -303,6 +303,55 @@ def worker(nicho, local, max_leads, log_q, result_q):
                 pass
             return resultado
 
+        def pesquisar_ddg(nome: str, cidade: str) -> dict:
+            """Busca '{nome} {cidade} CNPJ' no DuckDuckGo e extrai dados."""
+            res = {"cnpj": "", "email": "", "instagram": "", "info": ""}
+            try:
+                query = f'"{nome}" {cidade} CNPJ'
+                r = requests.get(
+                    "https://html.duckduckgo.com/html/",
+                    params={"q": query, "kl": "br-pt"},
+                    headers={**HEADERS, "Accept-Language": "pt-BR,pt;q=0.9"},
+                    timeout=12
+                )
+                soup = BeautifulSoup(r.text, "html.parser")
+                texto = soup.get_text(" ", strip=True)
+
+                # CNPJ nos resultados
+                res["cnpj"] = extrair_cnpj(texto)
+
+                # Email
+                for m in EMAIL_RE.findall(texto):
+                    d = m.split("@")[-1].lower()
+                    if d not in IGNORE:
+                        res["email"] = m.lower(); break
+
+                # Instagram
+                res["instagram"] = extrair_instagram(r.text)
+
+                # Info: snippet do 1º resultado relevante
+                for sel in ["a.result__snippet", "div.result__snippet", ".result__body"]:
+                    for tag in soup.select(sel)[:3]:
+                        txt = tag.get_text(" ", strip=True)
+                        if len(txt) > 40:
+                            res["info"] = txt[:280]; break
+                    if res["info"]: break
+
+                # Se não achou CNPJ, tenta busca mais direta
+                if not res["cnpj"]:
+                    query2 = f"{nome} {cidade} CNPJ site:cnpj.biz OR site:cnpja.com OR site:casadosdados.com.br"
+                    r2 = requests.get(
+                        "https://html.duckduckgo.com/html/",
+                        params={"q": query2, "kl": "br-pt"},
+                        headers={**HEADERS, "Accept-Language": "pt-BR,pt;q=0.9"},
+                        timeout=10
+                    )
+                    res["cnpj"] = extrair_cnpj(BeautifulSoup(r2.text, "html.parser").get_text(" "))
+
+            except Exception:
+                pass
+            return res
+
         def buscar_site(url):
             """Retorna dict com email, instagram, tempo, info, cnpj_data."""
             result = {"email":"","instagram":"","tempo":"","info":"","cnpj_data":{}}
@@ -664,6 +713,39 @@ def worker(nicho, local, max_leads, log_q, result_q):
                             log(f"      🏢 CNPJ {cnpj_data['cnpj_fmt']} | {cnpj_data.get('porte','')} | {cnpj_data.get('tempo_empresa','')}")
                 else:
                     log(f"   [{len(leads)+1}] {lead['nome'][:38]} — sem site")
+
+                # DuckDuckGo: busca ativa quando ainda faltam dados
+                falta_dados = not lead["cnpj"] or not lead["email"] or not lead["info_empresa"]
+                if falta_dados:
+                    cidade_busca = lead["cidade"] or local
+                    log(f"      Buscando '{lead['nome'][:30]}' no DuckDuckGo...")
+                    ddg = pesquisar_ddg(lead["nome"], cidade_busca)
+
+                    if not lead["email"] and ddg["email"]:
+                        lead["email"] = ddg["email"]
+                    if not lead["instagram"] and ddg["instagram"]:
+                        lead["instagram"] = ddg["instagram"]
+                    if not lead["info_empresa"] and ddg["info"]:
+                        lead["info_empresa"] = ddg["info"]
+
+                    # CNPJ encontrado no DuckDuckGo → consulta BrasilAPI
+                    if not lead["cnpj"] and ddg["cnpj"]:
+                        log(f"      CNPJ {ddg['cnpj'][:14]}... encontrado via DDG")
+                        cnpj_data = buscar_cnpj(ddg["cnpj"])
+                        if cnpj_data:
+                            lead["cnpj"] = cnpj_data.get("cnpj_fmt", "")
+                            if cnpj_data.get("porte"):
+                                lead["porte"] = cnpj_data["porte"]
+                            if cnpj_data.get("tempo_empresa"):
+                                lead["tempo_empresa"] = cnpj_data["tempo_empresa"]
+                            if not lead["cidade"] and cnpj_data.get("cidade_cnpj"):
+                                lead["cidade"] = cnpj_data["cidade_cnpj"]
+                            if cnpj_data.get("atividade"):
+                                ativ = cnpj_data["atividade"]
+                                if lead["info_empresa"] and ativ not in lead["info_empresa"]:
+                                    lead["info_empresa"] = f"[{ativ}] {lead['info_empresa']}"
+                                elif not lead["info_empresa"]:
+                                    lead["info_empresa"] = ativ
 
                 chave = _chave_lead(lead)
                 if chave in chaves_set:
