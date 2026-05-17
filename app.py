@@ -509,29 +509,79 @@ def worker(nicho, local, max_leads, log_q, result_q):
         driver.get(f"https://www.google.com/maps/search/{query.replace(' ', '+')}")
         time.sleep(3)
 
-        n_scrolls = max(10, (max_leads // 5) + 5)
+        n_scrolls = max(15, (max_leads // 3) + 8)
         log("⏬ Carregando resultados...")
 
-        try:
-            painel = driver.find_element(By.XPATH,
-                '//div[contains(@aria-label,"Resultados") or contains(@aria-label,"Results")][@role="feed"]')
-        except Exception:
-            painel = None
+        # Detecta o painel lateral de resultados com múltiplos seletores
+        painel = None
+        for xpath in [
+            '//div[@role="feed"]',
+            '//div[contains(@aria-label,"Resultados") or contains(@aria-label,"Results")]',
+            '//div[contains(@class,"m6QErb") and contains(@class,"DxyBCb")]',
+            '//div[contains(@class,"m6QErb")][@aria-label]',
+        ]:
+            try:
+                el = driver.find_element(By.XPATH, xpath)
+                if el:
+                    painel = el
+                    break
+            except Exception:
+                pass
 
-        for _ in range(n_scrolls):
+        log(f"   Painel: {'encontrado' if painel else 'fallback body'} | {n_scrolls} scrolls")
+
+        prev_count = 0
+        sem_novos  = 0
+        for i in range(n_scrolls):
             try:
                 if painel:
-                    driver.execute_script("arguments[0].scrollBy(0, 800);", painel)
+                    driver.execute_script("arguments[0].scrollTop += 900", painel)
                 else:
-                    driver.find_element(By.TAG_NAME, "body").send_keys(Keys.END)
-                time.sleep(2)
+                    driver.execute_script("window.scrollBy(0, 900)")
+                time.sleep(1.8)
+
+                # A cada 4 scrolls verifica se novos cards apareceram
+                if i % 4 == 3:
+                    cur = len(driver.find_elements(By.CSS_SELECTOR, 'a[href*="/maps/place/"]'))
+                    if cur == prev_count:
+                        sem_novos += 1
+                        if sem_novos >= 2:
+                            log(f"   Sem novos resultados após {i+1} scrolls, parando.")
+                            break
+                    else:
+                        sem_novos = 0
+                    prev_count = cur
+
+                    # Tenta encontrar painel se ainda não achou
+                    if painel is None:
+                        for xpath in ['//div[@role="feed"]',
+                                      '//div[contains(@class,"m6QErb")][@aria-label]']:
+                            try:
+                                painel = driver.find_element(By.XPATH, xpath)
+                                if painel: break
+                            except Exception:
+                                pass
             except Exception:
                 break
 
+        # Coleta cards únicos por href
+        raw_cards = []
+        for sel in [
+            'div[role="feed"] a[href*="/maps/place/"]',
+            'div[role="article"] a[href*="/maps/place/"]',
+            'a[href*="/maps/place/"]',
+        ]:
+            raw_cards = driver.find_elements(By.CSS_SELECTOR, sel)
+            if len(raw_cards) > 3:
+                break
+
+        seen_hrefs = set()
         cards = []
-        for sel in ['a[href*="/maps/place/"]', 'div[role="article"] a[href*="maps"]']:
-            cards = driver.find_elements(By.CSS_SELECTOR, sel)
-            if cards: break
+        for c in raw_cards:
+            href = (c.get_attribute("href") or "").split("?")[0]
+            if href and href not in seen_hrefs:
+                seen_hrefs.add(href)
+                cards.append(c)
 
         log(f"📋 {len(cards)} empresas encontradas. Coletando detalhes...")
 
