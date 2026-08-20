@@ -3,3 +3,8 @@ __pycache__/
 *.pyo
 .env
 *.xlsx
+
+# Dado real de lead capturado — nunca versionar
+leads.db
+exports/
+output/
