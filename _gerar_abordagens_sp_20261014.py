@@ -1,0 +1,255 @@
+"""Gera abordagens.html (cards por bairro, Copiar + wa.me) para o lote SP 2026-10-14.
+
+Lê D:/Projetos/EdenOs/.../comercial/leads/2026-10-14-leads-sites-sp/leads-sites.json,
+monta o HTML no padrão validado (comercial/abordagens/2026-10-09-porto-pt-manual/abordagens.html)
+e salva em .../2026-10-14-leads-sites-sp/abordagens.html.
+
+- 1º toque só para leads com celular válido; linha fixa → flag "Linha fixa".
+- Sem celular: card mostra só canal alternativo (Instagram), se existir.
+- Texto no estilo André: auto-apresentação, provocativo, curto, com saída explícita.
+"""
+import json
+import re
+import sys
+from collections import defaultdict
+from html import escape
+from pathlib import Path
+from urllib.parse import quote
+
+OUT = Path(r"D:/Projetos/EdenOs/eden-os/eden-os/comercial/leads/2026-10-14-leads-sites-sp")
+
+for s in (sys.stdout, sys.stderr):
+    if hasattr(s, "reconfigure"):
+        s.reconfigure(encoding="utf-8", errors="replace")
+
+
+def digits12(tel: str) -> str:
+    d = re.sub(r"\D", "", tel or "")
+    if d.startswith("55") and len(d) > 11:
+        d = d[2:]
+    if len(d) in (11, 12) and d.startswith("0"):
+        d = d[1:]
+    return d
+
+
+def celular(tel: str) -> bool:
+    d = digits12(tel)
+    return len(d) == 11 and d[2] == "9"
+
+
+# Nome de ficha do Maps vem com SEO enfiado ("X | Clínica de Estética em SP"); quando a 1ª parte
+# não é o nome da empresa, corrige à mão.
+NOME_MANUAL = {
+    "Apartamento Alto Padrão | Vila Nova Conceição | Liège Negócios Imobiliários": "Liège Negócios Imobiliários",
+    "Imóveis à Venda em Pinheiros São Paulo - AP Pinheiros": "AP Pinheiros",
+    "Restaurante Italiano | Ristorantino Caffè": "Ristorantino Caffè",
+    "Clinica de Estética Avançada - Von Beauty Higienópolis": "Von Beauty Higienópolis",
+    "SP62Arquitetura, Arquitetura, Arquiteto, Projeto": "SP62 Arquitetura",
+    "Clínica de estética avançada facial e corporal biomédica": "Clínica Paula Chigueira",
+    "Life Itaim Clínica de Estética": "Life Itaim",
+    "LEF Properties": "LEF Properties",
+    "CAMILA KLEIN Arquitetura": "Camila Klein Arquitetura + Interiores",
+    "Lanchonete Restaurante Santa Fé": "Restaurante Santa Fé",
+    "JT Arquitetura S/C Ltda": "JT Arquitetura",
+    "COBO Arquitetura e Design": "COBO Arquitetura e Design",
+}
+
+
+def nome_curto(nome: str) -> str:
+    for k, v in NOME_MANUAL.items():
+        if nome.startswith(k[:40]):
+            return v
+    n = re.split(r"\s+[|\-–—]\s+|,", nome)[0]
+    n = re.sub(r"\s*\(.*?\)", "", n)
+    n = re.sub(r"\s+(SP|em SP|São Paulo)$", "", n).strip(" .")
+    if n.isupper() and len(n) > 4:
+        n = " ".join(w if len(w) <= 3 and w not in ("E",) else w.capitalize() for w in n.split()).replace(" E ", " e ")
+    return n
+
+
+# Problema técnico em linguagem de dono de negócio (sem jargão de SEO)
+def dor_site_fraco(prob: str) -> str:
+    p = prob.lower()
+    if "título principal" in p:
+        return "a página não tem um título principal marcado para o Google, o que atrapalha a aparecer bem nas buscas"
+    if "meta description" in p:
+        return "a página não tem a descrição que o Google exibe nos resultados de busca — ele acaba mostrando um trecho aleatório"
+    if "schema" in p:
+        return "o site não informa ao Google, de forma organizada, dados como endereço, horário e tipo de negócio"
+    if "alt" in p:
+        return "as imagens não têm descrição, então o Google não consegue identificar o que elas mostram"
+    return "alguns pontos técnicos básicos que atrapalham a aparecer bem no Google"
+
+
+def msg_toque1(l: dict) -> str:
+    nome = nome_curto(l["nome"])
+    cat = l["categoria"]
+    prob = (l.get("problema") or "").strip()
+
+    if cat == "SEM SITE":
+        m = re.search(r"leva ao (\w+)", prob)
+        if m:
+            # Só afirma o que a ficha mostra: alguns leads têm site que a ficha não aponta (Salomão, EAP)
+            dor = (f"Pesquisei {nome} no Google e vi que o link de site da ficha do Maps leva ao {m.group(1)} "
+                   "— quem procura vocês por ali não chega a um site.")
+        else:
+            dor = f"Pesquisei {nome} no Google e vi que a ficha do Maps de vocês não tem link para um site."
+        oferta = "Se fizer sentido, mostro em poucos minutos como ficaria um site para vocês."
+    elif cat == "FORA DO AR":
+        if "erro" in prob:
+            dor = f"Pesquisei {nome} no Google e o link do site que aparece na ficha abre uma página de erro — quem clica por ali não chega até vocês."
+        else:
+            dor = f"Pesquisei {nome} no Google e o site que aparece na ficha não está abrindo — quem clica por ali não chega até vocês."
+        oferta = "Se fizer sentido, mostro em poucos minutos como resolveríamos isso."
+    else:  # SITE FRACO
+        dor = f"Pesquisei {nome} no Google e analisei o site de vocês: {dor_site_fraco(prob)}."
+        oferta = "Se fizer sentido, mostro em poucos minutos o que eu ajustaria."
+
+    return (
+        "Olá, tudo bem? Sou o André, da Eden Technology — desenvolvemos sites e sistemas sob medida.\n"
+        f"{dor}\n"
+        f"{oferta} Se não for o momento, é só me avisar que não volto a escrever."
+    )
+
+
+def main():
+    leads = json.loads((OUT / "leads-sites.json").read_text(encoding="utf-8"))
+    alvo = [l for l in leads if l["categoria"] in ("SEM SITE", "FORA DO AR", "SITE FRACO")]
+    wa_ok = [l for l in alvo if celular(l.get("telefone", ""))]
+    nichos = sorted({l.get("nicho") or "outros" for l in alvo})
+    cats = {c: sum(1 for l in alvo if l["categoria"] == c) for c in ("SEM SITE", "FORA DO AR", "SITE FRACO")}
+
+    por_bairro = defaultdict(list)
+    for l in alvo:
+        por_bairro[l.get("bairro") or "Sem bairro"].append(l)
+
+    # Página publicada como Artifact: sem doctype/head próprios, tokens claro/escuro.
+    css = """/* Mesa de despacho: resumo + filtros fixos no topo, fila de cartões por bairro */
+:root{--bg:#F8F8F6;--surface:#fff;--ink:#12241c;--mut:#5a6b62;--line:#e1e5df;--green:#18A558;--blue:#0E91CE;
+--soft:#eef6f1;--warnbg:#fff3dc;--warn:#7a5000;--okbg:#e2f4e9;--ok:#0f6b3a;--errbg:#fde6e4;--err:#8f2219;--onacc:#fff;
+--display:"Playfair Display",Georgia,serif;--body:"Inter",system-ui,-apple-system,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#071525;--surface:#0d2033;--ink:#e6efe9;--mut:#93a7a0;--line:#1d3448;--green:#2EE87A;--blue:#1AB8F5;--soft:#0f2a2a;--warnbg:#33280f;--warn:#f3c66b;--okbg:#103424;--ok:#7fe3a8;--errbg:#3a1714;--err:#f2a097;--onacc:#04150b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#071525;--surface:#0d2033;--ink:#e6efe9;--mut:#93a7a0;--line:#1d3448;--green:#2EE87A;--blue:#1AB8F5;--soft:#0f2a2a;--warnbg:#33280f;--warn:#f3c66b;--okbg:#103424;--ok:#7fe3a8;--errbg:#3a1714;--err:#f2a097;--onacc:#04150b;color-scheme:dark}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body)}
+.wrap{max-width:860px;margin:0 auto;padding-block:28px 72px;padding-inline:16px}
+h1{font:600 clamp(26px,5vw,36px)/1.15 var(--display);margin:0;text-wrap:balance}
+.sub{color:var(--mut);margin:8px 0 0;max-width:62ch}
+.bar{height:3px;width:96px;background:linear-gradient(90deg,#2EE87A,#1AB8F5);border-radius:2px;margin:16px 0 20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.stat{background:var(--surface);padding:12px 14px}.stat b{display:block;font:600 24px/1.1 var(--display);font-variant-numeric:tabular-nums}.stat span{font-size:12px;color:var(--mut);letter-spacing:.02em}
+details.rules{margin:16px 0 0;font-size:14px;color:var(--mut)}details.rules summary{cursor:pointer;color:var(--ink);font-weight:600}
+.tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;border-bottom:1px solid var(--line);margin-top:20px;display:flex;flex-direction:column;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:5px 12px;font:500 13px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.opts{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--mut);align-items:center}.opts label{cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+h2{font:600 22px var(--display);margin:32px 0 4px;display:flex;align-items:baseline;gap:8px}h2 span{font:400 13px var(--body);color:var(--mut)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0;display:flex;flex-direction:column;gap:10px}
+.card.sent{opacity:.55}.head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}h3{font-size:16px;margin:0 6px 0 0;min-width:0}
+.pill{border-radius:99px;padding:2px 9px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.p-sem{background:var(--okbg);color:var(--ok)}.p-fora{background:var(--errbg);color:var(--err)}.p-fraco{background:var(--warnbg);color:var(--warn)}
+.meta{color:var(--mut);margin:0;font-size:13px}.meta .tel{font-variant-numeric:tabular-nums;user-select:all;color:var(--ink)}
+.alert{background:var(--warnbg);color:var(--warn);border-radius:8px;padding:8px 12px;font-size:13px}
+pre{white-space:pre-wrap;background:var(--soft);border-radius:8px;padding:12px 14px;margin:0;font:14px/1.55 var(--body);color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);border-radius:8px;padding:8px 14px;background:var(--surface);color:var(--ink);font:600 14px var(--body);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.wa{background:var(--green);border-color:var(--green);color:var(--onacc)}.btn.ig{background:var(--blue);border-color:var(--blue);color:var(--onacc)}.btn.done{background:var(--ink);color:var(--bg)}
+.btn:focus-visible,.chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.sentbox{margin-left:auto;font-size:13px;color:var(--mut);display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}"""
+
+    js = """function msgFor(el){var c=el.closest('.card');var p=c&&c.querySelector('pre');return p?p.textContent:''}
+function fallbackCopy(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove()}
+function copy(t){try{navigator.clipboard.writeText(t).catch(function(){fallbackCopy(t)})}catch(e){fallbackCopy(t)}}
+var tt;function toast(x){var e=document.getElementById('toast');e.textContent=x;e.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('on')},3200)}
+function mode(){var r=document.querySelector('input[name=wamode]:checked');return r?r.value:'web'}
+var sent={};try{sent=JSON.parse(localStorage.getItem('sp-enviados')||'{}')}catch(e){}
+function saveSent(){try{localStorage.setItem('sp-enviados',JSON.stringify(sent))}catch(e){}}
+try{var sv=localStorage.getItem('wamode');if(sv){var i=document.querySelector('input[name=wamode][value='+sv+']');if(i)i.checked=true}}catch(e){}
+document.querySelectorAll('input[name=wamode]').forEach(function(i){i.addEventListener('change',function(){try{localStorage.setItem('wamode',i.value)}catch(e){}})});
+var nicho='todos';
+function apply(){var so=document.getElementById('f-wa').checked,hide=document.getElementById('f-sent').checked;
+ document.querySelectorAll('.card').forEach(function(c){var ok=(nicho==='todos'||c.dataset.nicho===nicho)&&(!so||c.dataset.wa==='1')&&!(hide&&sent[c.id]);c.hidden=!ok});
+ document.querySelectorAll('.bairro').forEach(function(b){var n=b.querySelectorAll('.card:not([hidden])').length;b.hidden=n===0;b.querySelector('h2 span').textContent='· '+n});
+ document.getElementById('n-sent').textContent=Object.keys(sent).length}
+document.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){nicho=ch.dataset.n;document.querySelectorAll('.chip').forEach(function(o){o.setAttribute('aria-pressed',o===ch?'true':'false')});apply()})});
+['f-wa','f-sent'].forEach(function(id){document.getElementById(id).addEventListener('change',apply)});
+document.querySelectorAll('.card').forEach(function(c){var cb=c.querySelector('.sentbox input');if(sent[c.id]){cb.checked=true;c.classList.add('sent')}
+ cb.addEventListener('change',function(){if(cb.checked){sent[c.id]=1;c.classList.add('sent')}else{delete sent[c.id];c.classList.remove('sent')}saveSent();apply()})});
+document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){copy(msgFor(b));b.textContent='Copiado';b.classList.add('done');setTimeout(function(){b.textContent='Copiar';b.classList.remove('done')},1800)})});
+document.querySelectorAll('a.btn.wa').forEach(function(a){var orig=a.getAttribute('href');a.addEventListener('click',function(){var t=msgFor(a);copy(t);
+ var m=orig.match(/^https:\\/\\/wa\\.me\\/(\\d+)/);if(!m)return;var q='phone='+m[1]+'&text='+encodeURIComponent(t);
+ a.href=(mode()==='web'?'https://web.whatsapp.com/send?':'https://api.whatsapp.com/send?')+q;
+ toast('Mensagem copiada. Se o campo do WhatsApp vier vazio, cole com Ctrl+V.')})});
+document.querySelectorAll('a.btn.ig').forEach(function(a){a.addEventListener('click',function(){copy(msgFor(a));toast('Mensagem copiada. Na DM, cole com Ctrl+V.')})});
+apply();"""
+
+    pill_cls = {"SEM SITE": "p-sem", "FORA DO AR": "p-fora", "SITE FRACO": "p-fraco"}
+    chips = '<button class="chip" data-n="todos" aria-pressed="true">Todos</button>' + "".join(
+        f'<button class="chip" data-n="{escape(n)}" aria-pressed="false">{escape(n)}</button>' for n in nichos)
+
+    parts = [
+        '<title>Abordagens SP Nobre</title>'
+        '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600&display=swap">'
+        f'<style>{css}</style><div class="wrap" lang="pt-BR">'
+        '<h1>Abordagens São Paulo · bairros nobres</h1>'
+        '<p class="sub">Primeiro contato por WhatsApp para venda de sites. Captação no Google Maps em 14/10/2026, '
+        'auditoria de site revisada à mão. Envio manual, do número do André.</p><div class="bar"></div>'
+        '<div class="stats">'
+        f'<div class="stat"><b>{len(alvo)}</b><span>leads-alvo</span></div>'
+        f'<div class="stat"><b>{len(wa_ok)}</b><span>com WhatsApp</span></div>'
+        f'<div class="stat"><b>{cats["SEM SITE"]}</b><span>sem site</span></div>'
+        f'<div class="stat"><b>{cats["FORA DO AR"]}</b><span>site fora do ar</span></div>'
+        f'<div class="stat"><b>{cats["SITE FRACO"]}</b><span>site fraco</span></div>'
+        '<div class="stat"><b id="n-sent">0</b><span>marcados como enviados</span></div></div>'
+        '<details class="rules"><summary>Regras desta rodada</summary><p>Uma mensagem só, curta, com saída explícita. '
+        'Sem preço na primeira mensagem. Sem números inventados e sem cases: a abordagem sai da auditoria do site da própria empresa. '
+        'Um follow-up 3 dias depois (mesmo texto + "chegou?") e depois parar. Quem recusar não volta a ser contatado. '
+        'A marcação de enviados fica salva só neste navegador.</p></details>'
+        f'<div class="tools"><div class="chips">{chips}</div><div class="opts">'
+        '<label><input type="checkbox" id="f-wa"> Só com WhatsApp</label>'
+        '<label><input type="checkbox" id="f-sent"> Esconder enviados</label>'
+        '<span>Botão abre no:</span><label><input type="radio" id="m-web" name="wamode" value="web" checked> WhatsApp Web</label>'
+        '<label><input type="radio" id="m-app" name="wamode" value="app"> App</label></div></div>'
+    ]
+
+    for bairro in sorted(por_bairro):
+        leads_b = por_bairro[bairro]
+        parts.append(f'<section class="bairro"><h2>{escape(bairro.split(",")[0])} <span>· {len(leads_b)}</span></h2>')
+        for l in leads_b:
+            msg = msg_toque1(l)
+            ig = (l.get("instagram") or "").lstrip("@")
+            tel = l.get("telefone") or ""
+            wa = celular(tel)
+            cid = "l" + re.sub(r"\W", "", (l.get("cnpj") or "") + nome_curto(l["nome"]) + digits12(tel))[:48]
+            meta = f'{escape(l.get("nicho",""))} · {l.get("num_reviews") or "—"} avaliações no Maps'
+            if tel:
+                meta += f' · <span class="tel">{escape(tel)}</span>'
+            if ig:
+                meta += f' · @{escape(ig)}'
+            head = (f'<div class="head"><h3>{escape(nome_curto(l["nome"]))}</h3>'
+                    f'<span class="pill {pill_cls[l["categoria"]]}">{l["categoria"].lower()}</span></div>')
+            info = f'<p class="meta">{meta}</p>'
+            flag = ""
+            botoes = '<button class="btn" data-copy>Copiar</button>'
+            if wa:
+                href = f'https://wa.me/55{digits12(tel)}?text={quote(msg)}'
+                botoes += f'<a class="btn wa" target="_blank" rel="noopener" href="{href}">Abrir no WhatsApp</a>'
+            else:
+                flag = ('<div class="alert">' + ("Linha fixa: ligar e pedir o WhatsApp do responsável."
+                        if tel else "Sem telefone no Google Maps: usar o Instagram ou o site.") + "</div>")
+                if ig:
+                    botoes += f'<a class="btn ig" target="_blank" rel="noopener" href="https://www.instagram.com/{escape(ig)}/">Abrir Instagram</a>'
+            botoes += f'<label class="sentbox"><input type="checkbox" id="s-{cid}"> enviado</label>'
+            parts.append(f'<article class="card" id="{cid}" data-nicho="{escape(l.get("nicho") or "outros")}" data-wa="{1 if wa else 0}">'
+                         f'{head}{info}{flag}<pre>{escape(msg)}</pre><div class="row">{botoes}</div></article>')
+        parts.append('</section>')
+
+    parts.append(f'</div><div id="toast" role="status"></div><script>{js}</script>')
+    (OUT / "abordagens.html").write_text("".join(parts), encoding="utf-8")
+    print(f"OK: {OUT / 'abordagens.html'} | alvo={len(alvo)} com_whatsapp={len(wa_ok)} {cats}")
+
+
+if __name__ == "__main__":
+    main()

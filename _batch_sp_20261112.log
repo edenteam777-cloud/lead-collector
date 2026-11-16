@@ -1,0 +1,476 @@
+[14:05:22] === Início: 32 combos (0 já feitos) ===
+[14:05:22] --- [1/32] clínica odontológica implantes @ Jardins, São Paulo - SP (max 7) ---
+[14:05:57] rc=1 em 34s | tail:
+🗺️  Coletando 'clínica odontológica implantes' em 'Jardins, São Paulo - SP' (máx 7)...
+🚀 Iniciando Chrome...
+🗺️  Buscando: clínica odontológica implantes em Jardins, São Paulo - SP
+   Painel: não encontrado
+[14:05:59]     → 0 lead(s) novo(s) no banco
+[14:05:59] --- [2/32] clínica odontológica implantes @ Itaim Bibi, São Paulo - SP (max 7) ---
+[14:06:12] rc=1 em 14s | tail:
+🗺️  Coletando 'clínica odontológica implantes' em 'Itaim Bibi, São Paulo - SP' (máx 7)...
+🚀 Iniciando Chrome...
+🗺️  Buscando: clínica odontológica implantes em Itaim Bibi, São Paulo - SP
+   Painel: encontrado ✓
+[14:06:14]     → 0 lead(s) novo(s) no banco
+[14:06:14] --- [3/32] clínica odontológica implantes @ Moema, São Paulo - SP (max 7) ---
+[14:06:47] rc=1 em 32s | tail:
+🗺️  Coletando 'clínica odontológica implantes' em 'Moema, São Paulo - SP' (máx 7)...
+🚀 Iniciando Chrome...
+🗺️  Buscando: clínica odontológica implantes em Moema, São Paulo - SP
+   Painel: não encontrado
+[14:06:49]     → 0 lead(s) novo(s) no banco
+[14:06:49] --- [4/32] clínica odontológica implantes @ Pinheiros, São Paulo - SP (max 7) ---
+[14:07:03] rc=1 em 14s | tail:
+🗺️  Coletando 'clínica odontológica implantes' em 'Pinheiros, São Paulo - SP' (máx 7)...
+🚀 Iniciando Chrome...
+🗺️  Buscando: clínica odontológica implantes em Pinheiros, São Paulo - SP
+   Painel: encontrado ✓
+[14:07:05]     → 0 lead(s) novo(s) no banco
+[14:07:05] --- [5/32] clínica odontológica implantes @ Vila Nova Conceição, São Paulo - SP (max 7) ---
+[14:07:33] rc=1 em 28s | tail:
+🗺️  Coletando 'clínica odontológica implantes' em 'Vila Nova Conceição, São Paulo - SP' (máx 7)...
+🚀 Iniciando Chrome...
+🗺️  Buscando: clínica odontológica implantes em Vila Nova Conceição, São Paulo - SP
+   Painel: não encontrado
+[14:07:35]     → 0 lead(s) novo(s) no banco
+[14:07:35] --- [6/32] clínica odontológica implantes @ Higienópolis, São Paulo - SP (max 7) ---
+[14:08:12] rc=1 em 37s | tail:
+🗺️  Coletando 'clínica odontológica implantes' em 'Higienópolis, São Paulo - SP' (máx 7)...
+🚀 Iniciando Chrome...
+🗺️  Buscando: clínica odontológica implantes em Higienópolis, São Paulo - SP
+   Painel: não encontrado
+[14:08:14]     → 0 lead(s) novo(s) no banco
+[14:08:14] --- [7/32] clínica odontológica implantes @ Perdizes, São Paulo - SP (max 7) ---
+[14:08:53] rc=0 em 40s | tail:
+   🏛️  BrasilAPI: 19999999999999
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1408_clínica_odontológica_implantes_Perdizes,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1408_clínica_odontológica_implantes_Perdizes,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — clínica odontológica implantes · Perdizes, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 5 | ❄️ Frio/Fora ICP: 2
+============================================================
+
+🌡 5 lead(s) MORNO — nutrir.
+
+[14:08:55]     → 7 lead(s) novo(s) no banco
+[14:08:55] --- [8/32] clínica odontológica implantes @ Brooklin, São Paulo - SP (max 7) ---
+[14:09:27] rc=1 em 31s | tail:
+🗺️  Coletando 'clínica odontológica implantes' em 'Brooklin, São Paulo - SP' (máx 7)...
+🚀 Iniciando Chrome...
+🗺️  Buscando: clínica odontológica implantes em Brooklin, São Paulo - SP
+   Painel: não encontrado
+[14:09:29]     → 0 lead(s) novo(s) no banco
+[14:09:29] --- [9/32] dermatologista clínica médica particular @ Jardins, São Paulo - SP (max 7) ---
+[14:10:24] rc=0 em 56s | tail:
+   🤖 Qualificando com IA (leve): Dra. Giana Campoi - Dermatologista 
+   [!] IA não qualificou Dra. Giana Campoi - Dermatolog: ANTHROPIC_API_KEY não configurada
+   ✅ MORNO 61/100 | NUTRIR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1410_dermatologista_clínica_médica_particular_Jardins,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1410_dermatologista_clínica_médica_particular_Jardins,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Jardins, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 7 | ❄️ Frio/Fora ICP: 0
+============================================================
+
+🌡 7 lead(s) MORNO — nutrir.
+
+[14:10:26]     → 7 lead(s) novo(s) no banco
+[14:10:26] --- [10/32] dermatologista clínica médica particular @ Itaim Bibi, São Paulo - SP (max 7) ---
+[14:11:15] rc=0 em 49s | tail:
+   🤖 Qualificando com IA (leve): Dermatologista Dra. Luciane Scatton
+   [!] IA não qualificou Dermatologista Dra. Luciane Sc: ANTHROPIC_API_KEY não configurada
+   ✅ MORNO 61/100 | NUTRIR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1411_dermatologista_clínica_médica_particular_Itaim_Bibi,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1411_dermatologista_clínica_médica_particular_Itaim_Bibi,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Itaim Bibi, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 6 | ❄️ Frio/Fora ICP: 0
+============================================================
+
+🌡 6 lead(s) MORNO — nutrir.
+
+[14:11:17]     → 6 lead(s) novo(s) no banco
+[14:11:17] --- [11/32] dermatologista clínica médica particular @ Moema, São Paulo - SP (max 7) ---
+[14:12:12] rc=0 em 54s | tail:
+   🤖 Qualificando com IA (leve): Clínica Dra. Luciana Macedo de Oliv
+   [!] IA não qualificou Clínica Dra. Luciana Macedo de: ANTHROPIC_API_KEY não configurada
+   ✅ MORNO 61/100 | NUTRIR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1412_dermatologista_clínica_médica_particular_Moema,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1412_dermatologista_clínica_médica_particular_Moema,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Moema, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 7 | ❄️ Frio/Fora ICP: 0
+============================================================
+
+🌡 7 lead(s) MORNO — nutrir.
+
+[14:12:14]     → 7 lead(s) novo(s) no banco
+[14:12:14] --- [12/32] dermatologista clínica médica particular @ Pinheiros, São Paulo - SP (max 7) ---
+[14:13:01] rc=0 em 47s | tail:
+   ✅ FRIO 48/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1412_dermatologista_clínica_médica_particular_Pinheiros,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1412_dermatologista_clínica_médica_particular_Pinheiros,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Pinheiros, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 7
+============================================================
+
+[14:13:03]     → 2 lead(s) novo(s) no banco
+[14:13:03] --- [13/32] dermatologista clínica médica particular @ Vila Nova Conceição, São Paulo - SP (max 7) ---
+[14:13:44] rc=0 em 41s | tail:
+   🏛️  BrasilAPI: 35769403487049
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1413_dermatologista_clínica_médica_particular_Vila_Nova_Conceição,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1413_dermatologista_clínica_médica_particular_Vila_Nova_Conceição,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Vila Nova Conceição, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 1 | ❄️ Frio/Fora ICP: 6
+============================================================
+
+🌡 1 lead(s) MORNO — nutrir.
+
+[14:13:46]     → 7 lead(s) novo(s) no banco
+[14:13:46] --- [14/32] dermatologista clínica médica particular @ Higienópolis, São Paulo - SP (max 7) ---
+[14:14:36] rc=0 em 50s | tail:
+   ✅ FRIO 52/100 | DESCARTAR
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1414_dermatologista_clínica_médica_particular_Higienópolis,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1414_dermatologista_clínica_médica_particular_Higienópolis,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Higienópolis, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 7
+============================================================
+
+[14:14:38]     → 7 lead(s) novo(s) no banco
+[14:14:38] --- [15/32] dermatologista clínica médica particular @ Perdizes, São Paulo - SP (max 7) ---
+[14:15:25] rc=0 em 47s | tail:
+   ✅ FRIO 52/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1415_dermatologista_clínica_médica_particular_Perdizes,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1415_dermatologista_clínica_médica_particular_Perdizes,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Perdizes, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 7
+============================================================
+
+[14:15:27]     → 7 lead(s) novo(s) no banco
+[14:15:27] --- [16/32] dermatologista clínica médica particular @ Brooklin, São Paulo - SP (max 7) ---
+[14:16:14] rc=0 em 47s | tail:
+   ✅ FRIO 52/100 | DESCARTAR
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1416_dermatologista_clínica_médica_particular_Brooklin,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1416_dermatologista_clínica_médica_particular_Brooklin,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — dermatologista clínica médica particular · Brooklin, São Paulo - SP
+Total: 7 | 🔥 Quente: 0 | 🌡 Morno: 1 | ❄️ Frio/Fora ICP: 6
+============================================================
+
+🌡 1 lead(s) MORNO — nutrir.
+
+[14:16:16]     → 7 lead(s) novo(s) no banco
+[14:16:16] --- [17/32] fisioterapia e pilates studio @ Jardins, São Paulo - SP (max 6) ---
+[14:17:00] rc=0 em 44s | tail:
+   ✅ FRIO 52/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1416_fisioterapia_e_pilates_studio_Jardins,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1416_fisioterapia_e_pilates_studio_Jardins,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Jardins, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 1 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+🌡 1 lead(s) MORNO — nutrir.
+
+[14:17:02]     → 6 lead(s) novo(s) no banco
+[14:17:02] --- [18/32] fisioterapia e pilates studio @ Itaim Bibi, São Paulo - SP (max 6) ---
+[14:17:46] rc=0 em 44s | tail:
+   ✅ FRIO 48/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1417_fisioterapia_e_pilates_studio_Itaim_Bibi,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1417_fisioterapia_e_pilates_studio_Itaim_Bibi,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Itaim Bibi, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 1 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+🌡 1 lead(s) MORNO — nutrir.
+
+[14:17:48]     → 6 lead(s) novo(s) no banco
+[14:17:48] --- [19/32] fisioterapia e pilates studio @ Moema, São Paulo - SP (max 6) ---
+[14:18:33] rc=0 em 45s | tail:
+   ✅ FRIO 52/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: ✓ | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1418_fisioterapia_e_pilates_studio_Moema,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1418_fisioterapia_e_pilates_studio_Moema,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Moema, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 6
+============================================================
+
+[14:18:35]     → 6 lead(s) novo(s) no banco
+[14:18:35] --- [20/32] fisioterapia e pilates studio @ Pinheiros, São Paulo - SP (max 6) ---
+[14:19:22] rc=0 em 46s | tail:
+   ✅ FRIO 48/100 | DESCARTAR
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1419_fisioterapia_e_pilates_studio_Pinheiros,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1419_fisioterapia_e_pilates_studio_Pinheiros,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Pinheiros, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 3 | ❄️ Frio/Fora ICP: 3
+============================================================
+
+🌡 3 lead(s) MORNO — nutrir.
+
+[14:19:24]     → 6 lead(s) novo(s) no banco
+[14:19:24] --- [21/32] fisioterapia e pilates studio @ Vila Nova Conceição, São Paulo - SP (max 6) ---
+[14:20:12] rc=0 em 49s | tail:
+   🏛️  BrasilAPI: 14427179450400
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1420_fisioterapia_e_pilates_studio_Vila_Nova_Conceição,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1420_fisioterapia_e_pilates_studio_Vila_Nova_Conceição,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Vila Nova Conceição, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 1 | ❄️ Frio/Fora ICP: 4
+============================================================
+
+🌡 1 lead(s) MORNO — nutrir.
+
+[14:20:14]     → 5 lead(s) novo(s) no banco
+[14:20:14] --- [22/32] fisioterapia e pilates studio @ Higienópolis, São Paulo - SP (max 6) ---
+[14:21:04] rc=0 em 49s | tail:
+   🏛️  BrasilAPI: 14427179450405
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1421_fisioterapia_e_pilates_studio_Higienópolis,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1421_fisioterapia_e_pilates_studio_Higienópolis,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Higienópolis, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 3 | ❄️ Frio/Fora ICP: 3
+============================================================
+
+🌡 3 lead(s) MORNO — nutrir.
+
+[14:21:06]     → 6 lead(s) novo(s) no banco
+[14:21:06] --- [23/32] fisioterapia e pilates studio @ Perdizes, São Paulo - SP (max 6) ---
+[14:21:49] rc=0 em 44s | tail:
+   ✅ FRIO 48/100 | DESCARTAR
+   📊 Score: 52 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 52/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1421_fisioterapia_e_pilates_studio_Perdizes,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1421_fisioterapia_e_pilates_studio_Perdizes,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Perdizes, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 2 | ❄️ Frio/Fora ICP: 4
+============================================================
+
+🌡 2 lead(s) MORNO — nutrir.
+
+[14:21:51]     → 6 lead(s) novo(s) no banco
+[14:21:51] --- [24/32] fisioterapia e pilates studio @ Brooklin, São Paulo - SP (max 6) ---
+[14:22:34] rc=0 em 43s | tail:
+   ✅ FRIO 52/100 | DESCARTAR
+   📊 Score: 48 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 48/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1422_fisioterapia_e_pilates_studio_Brooklin,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1422_fisioterapia_e_pilates_studio_Brooklin,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — fisioterapia e pilates studio · Brooklin, São Paulo - SP
+Total: 6 | 🔥 Quente: 0 | 🌡 Morno: 1 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+🌡 1 lead(s) MORNO — nutrir.
+
+[14:22:36]     → 6 lead(s) novo(s) no banco
+[14:22:36] --- [25/32] escritório de advocacia @ Jardins, São Paulo - SP (max 5) ---
+[14:23:23] rc=0 em 47s | tail:
+   ✅ FRIO 38/100 | DESCARTAR
+   📊 Score: 38 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 38/100 | DESCARTAR
+   📊 Score: 38 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 38/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1423_escritório_de_advocacia_Jardins,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1423_escritório_de_advocacia_Jardins,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Jardins, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:23:25]     → 5 lead(s) novo(s) no banco
+[14:23:25] --- [26/32] escritório de advocacia @ Itaim Bibi, São Paulo - SP (max 5) ---
+[14:24:18] rc=0 em 53s | tail:
+   ✅ FRIO 38/100 | DESCARTAR
+   📊 Score: 42 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 42/100 | DESCARTAR
+   📊 Score: 42 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 42/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1424_escritório_de_advocacia_Itaim_Bibi,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1424_escritório_de_advocacia_Itaim_Bibi,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Itaim Bibi, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:24:20]     → 5 lead(s) novo(s) no banco
+[14:24:20] --- [27/32] escritório de advocacia @ Moema, São Paulo - SP (max 5) ---
+[14:25:01] rc=0 em 41s | tail:
+   🏛️  BrasilAPI: 49372973000140
+   📊 Score: 0 (FORA_ICP) | CNPJ: ✓ | Site: ✓
+   ✅ FORA_ICP 0/100 | DESCARTAR
+   📊 Score: 0 (FORA_ICP) | CNPJ: ✓ | Site: ✓
+   ✅ FORA_ICP 0/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1424_escritório_de_advocacia_Moema,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1424_escritório_de_advocacia_Moema,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Moema, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:25:03]     → 5 lead(s) novo(s) no banco
+[14:25:03] --- [28/32] escritório de advocacia @ Pinheiros, São Paulo - SP (max 5) ---
+[14:25:44] rc=0 em 41s | tail:
+   ✅ FRIO 42/100 | DESCARTAR
+   📊 Score: 42 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 42/100 | DESCARTAR
+   📊 Score: 0 (FORA_ICP) | CNPJ: ✓ | Site: ✓
+   ✅ FORA_ICP 0/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1425_escritório_de_advocacia_Pinheiros,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1425_escritório_de_advocacia_Pinheiros,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Pinheiros, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:25:46]     → 5 lead(s) novo(s) no banco
+[14:25:46] --- [29/32] escritório de advocacia @ Vila Nova Conceição, São Paulo - SP (max 5) ---
+[14:26:27] rc=0 em 41s | tail:
+   ✅ FRIO 38/100 | DESCARTAR
+   📊 Score: 0 (FORA_ICP) | CNPJ: ✓ | Site: ✓
+   ✅ FORA_ICP 0/100 | DESCARTAR
+   📊 Score: 38 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 38/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1426_escritório_de_advocacia_Vila_Nova_Conceição,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1426_escritório_de_advocacia_Vila_Nova_Conceição,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Vila Nova Conceição, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:26:29]     → 5 lead(s) novo(s) no banco
+[14:26:29] --- [30/32] escritório de advocacia @ Higienópolis, São Paulo - SP (max 5) ---
+[14:27:27] rc=0 em 58s | tail:
+   ✅ FRIO 51/100 | DESCARTAR
+   📊 Score: 51 (FRIO) | CNPJ: — | Site: —
+   ✅ FRIO 51/100 | DESCARTAR
+   📊 Score: 51 (FRIO) | CNPJ: — | Site: —
+   ✅ FRIO 51/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1427_escritório_de_advocacia_Higienópolis,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1427_escritório_de_advocacia_Higienópolis,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Higienópolis, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:27:29]     → 5 lead(s) novo(s) no banco
+[14:27:29] --- [31/32] escritório de advocacia @ Perdizes, São Paulo - SP (max 5) ---
+[14:28:13] rc=0 em 44s | tail:
+   ✅ FRIO 42/100 | DESCARTAR
+   📊 Score: 42 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 42/100 | DESCARTAR
+   📊 Score: 38 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 38/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1428_escritório_de_advocacia_Perdizes,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1428_escritório_de_advocacia_Perdizes,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Perdizes, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:28:15]     → 5 lead(s) novo(s) no banco
+[14:28:15] --- [32/32] escritório de advocacia @ Brooklin, São Paulo - SP (max 5) ---
+[14:28:56] rc=0 em 41s | tail:
+   ✅ FRIO 42/100 | DESCARTAR
+   📊 Score: 42 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 42/100 | DESCARTAR
+   📊 Score: 42 (FRIO) | CNPJ: — | Site: ✓
+   ✅ FRIO 42/100 | DESCARTAR
+📊 Excel salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1428_escritório_de_advocacia_Brooklin,_São_Paulo_-_SP.xlsx
+📄 PDF salvo em: D:\Projetos\lead\exports\leads_2026-11-12-1428_escritório_de_advocacia_Brooklin,_São_Paulo_-_SP.pdf
+📤 Exportado para comercial/leads/ e marketing/leads/ (Eden OS).
+
+============================================================
+RESUMO — escritório de advocacia · Brooklin, São Paulo - SP
+Total: 5 | 🔥 Quente: 0 | 🌡 Morno: 0 | ❄️ Frio/Fora ICP: 5
+============================================================
+
+[14:28:58]     → 5 lead(s) novo(s) no banco
+[14:28:58] === FIM: 144 leads novos no lote SP ===
